@@ -12,6 +12,7 @@ app.use("/", express.static(path.join(__dirname, "public")));
 const fs = require('fs');
 const mysql = require('mysql2');
 const conf = JSON.parse(fs.readFileSync("conf.json"));
+conf.ssl.ca = fs.readFileSync(__dirname + '/ca.pem');
 const connection = mysql.createConnection(conf);
 
 
@@ -43,7 +44,7 @@ const executeQuery = (sql) => {
     INSERT INTO todo (name, completed) VALUES ('$NAME', '$COMPLETED')
        `;
     let sql = template.replace("$NAME", todo.name);
-    sql = sql.replace("$COMPLETED", todo.completed);
+    sql = sql.replace("$COMPLETED", todo.completed ? 1 : 0);
     return executeQuery(sql); 
  }
 
